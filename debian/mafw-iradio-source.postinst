@@ -1,0 +1,7 @@
+#!/bin/sh
+set -e
+
+#DEBHELPER#
+
+test -x /usr/bin/mafw.sh && /usr/bin/mafw.sh start mafw-iradio-source || \
+true;

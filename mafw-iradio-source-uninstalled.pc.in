@@ -1,0 +1,12 @@
+prefix=
+exec_prefix=
+libdir=${pcfiledir}/upnp-source
+includedir=${pcfiledir}/
+
+Name: mafw-upnp-source
+Description: UPnP source for Media Application Framework (MAFW) library
+Version: @VERSION@
+Libs: ${libdir}/mafw-upnp-source.la
+Cflags:
+Requires: gobject-2.0 gnome-vfs-2.0 gupnp-1.0
+Requires.Private:

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration xmlns="http://www.s60.com/xml/confml/2"
+	xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<data>
+		<mafw-iradio-source-bookmarks>
+			<IRadioChannel>
+				<Name>BBC Radio 1</Name>
+				<URI>http://www.bbc.co.uk/radio1/realaudio/media/r1live.ram</URI>
+			</IRadioChannel>
+			<IRadioChannel>
+				<Name>BBC World Service</Name>
+				<URI>http://www.bbc.co.uk/worldservice/meta/tx/nb/live_news_au_nb.ram</URI>
+			</IRadioChannel>
+			<IRadioChannel>
+				<Name>BBC Sport Roundup</Name>
+				<URI>http://www.bbc.co.uk/worldservice/ram/sportsroundup.ram</URI>
+			</IRadioChannel>
+			<IRadioChannel>
+				<Name>BBC World News Summary</Name>
+				<URI>http://www.bbc.co.uk/worldservice/meta/tx/nb/summary5min_au_nb.ram</URI>
+			</IRadioChannel>
+			<VideoBookmark>
+				<Name>VideoStream1</Name>
+				<URI>mms://videobroadcast.com/somevideo</URI>
+				<Icon>
+					<targetPath>BUILD:///icons</targetPath>
+					<localPath>whatever/icon1.png</localPath>
+				</Icon>
+			</VideoBookmark>
+			<VideoBookmark>
+				<Name>VideoStream2</Name>
+				<URI>mms://videobroadcast.com/someothervideo</URI>
+				<Icon>
+					<targetPath>BUILD:///icons</targetPath>
+					<localPath>stuff/whatever/icon2.png</localPath>
+				</Icon>
+			</VideoBookmark>
+		</mafw-iradio-source-bookmarks>
+</data>
+</configuration>

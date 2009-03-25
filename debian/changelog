@@ -1,0 +1,180 @@
+mafw-iradio-source (0.1.2009.13-5) unstable; urgency=low
+
+  * MAFW iradio source, pre-release 0.2009.13-5
+
+ -- Juha Kellokoski <ext-juha.kellokoski@nokia.com>  Wed, 25 Mar 2009 09:16:45 +0200
+
+mafw-iradio-source (0.1.2009.13-4) unstable; urgency=low
+
+  * MAFW iradio source, pre-release 0.2009.13-4
+  * Set Visa as integrator.
+  * Upgrade copyright year.
+  * Add headers for Makefile.am and configure.ac files.
+  * Set Visa Smolander as the contact person in headers.
+
+ -- Juha Kellokoski <ext-juha.kellokoski@nokia.com>  Wed, 25 Mar 2009 09:16:45 +0200
+
+mafw-iradio-source (0.1.2009.13-3) unstable; urgency=low
+
+  * MAFW iradio source, pre-release 0.2009.13-3
+
+ -- Juha Kellokoski <ext-juha.kellokoski@nokia.com>  Tue, 24 Mar 2009 09:23:03 +0200
+
+mafw-iradio-source (0.1.2009.13-1) unstable; urgency=low
+
+  * MAFW iradio source, pre-release 0.2009.13-1
+  * Fixes: NB#105201 - mafw-iradio-source must not access $HOME
+
+ -- Juha Kellokoski <ext-juha.kellokoski@nokia.com>  Fri, 20 Mar 2009 09:10:54 +0200
+
+mafw-iradio-source (0.1.2009.12-2) unstable; urgency=low
+
+  * MAFW iradio source, pre-release 0.2009.12-2
+  * Fixes: NB#105201 - mafw-iradio-source must not access $HOME
+
+ -- Juha Kellokoski <ext-juha.kellokoski@nokia.com>  Tue, 17 Mar 2009 09:21:54 +0200
+
+mafw-iradio-source (0.1.2009.11-5) unstable; urgency=low
+
+  * MAFW iradio source, pre-release 0.2009.11-5
+
+ -- Juha Kellokoski <ext-juha.kellokoski@nokia.com>  Thu, 12 Mar 2009 09:13:31 +0200
+
+mafw-iradio-source (0.1.2009.10-1) unstable; urgency=low
+
+  * MAFW iradio source, pre-release 0.2009.10-1
+  * Fixes: NB#100792   <satefy> mafw-iradio-source.c Possible NULL dereference
+  * Removing un-needed bookmark file
+
+ -- Juha Kellokoski <ext-juha.kellokoski@nokia.com>  Thu, 26 Feb 2009 14:06:24 +0200
+
+mafw-iradio-source (0.1.2009.07-2) unstable; urgency=low
+
+  * MAFW iradio source, pre-release 0.2009.07-2
+
+ -- Juha Kellokoski <ext-juha.kellokoski@nokia.com>  Wed, 11 Feb 2009 14:20:00 +0200
+
+mafw-iradio-source (0.1.2009.07-1) unstable; urgency=low
+
+  * MAFW iradio source, pre-release 0.2009.07-1
+  * Fixes: NB#99643
+  * Fixes: NB#100500
+
+ -- Mika Tapojärvi <ext-mika.tapojarvi@nokia.com>  Fri, 06 Feb 2009 08:38:40 +0200
+
+mafw-iradio-source (0.1.2009.06-1) unstable; urgency=low
+
+  * MAFW iradio source, pre-release 0.2009.06-1
+  * Adapted mafw-iradio-source to the changed in MafwFilter API.
+  * Adapted mafw-iradio-source tests to the new MafwFilter API.
+  * Added mafw-tracker-source and mafw-iradio-source extended descriptions.
+
+ -- Mika Tapojärvi <ext-mika.tapojarvi@nokia.com>  Fri, 30 Jan 2009 14:11:02 +0200
+
+mafw-iradio-source (0.1.2009.05-1) unstable; urgency=low
+
+  * MAFW iradio source, pre-release 0.2009.05-1
+  * Changing the base class of the extension objects to GInitiallyUnowned
+
+ -- Mika Tapojärvi <ext-mika.tapojarvi@nokia.com>  Thu, 22 Jan 2009 14:35:39 +0200
+
+mafw-iradio-source (0.1.2009.04-1) unstable; urgency=low
+
+  * MAFW, pre-release 0.2009.04-1
+  * Reducing lintian warnings.
+
+ -- Mika Tapojärvi <ext-mika.tapojarvi@nokia.com>  Fri, 16 Jan 2009 15:04:49 +0200
+
+mafw-iradio-source (0.1.2009.03-1) unstable; urgency=low
+
+  * MAFW, pre-release 0.1.2009.03-1
+
+ -- Mika Tapojärvi <ext-mika.tapojarvi@nokia.com>  Fri, 09 Jan 2009 15:41:50 +0200
+
+mafw-iradio-source (0.1.2008.52-1) unstable; urgency=low
+
+  * Renamed midas to mafw
+
+ -- Zeeshan Ali <zeeshan.ali@nokia.com>  Mon, 22 Dec 2008 15:28:58 +0200
+
+midas-iradio-source (0.1.2008.52) unstable; urgency=low
+
+  * tagging before renaming midas to mafw.
+
+ -- Zeeshan Ali <zeeshan.ali@nokia.com>  Fri, 19 Dec 2008 15:28:58 +0200
+
+midas-iradio-source (0.1.2008.51) unstable; urgency=low
+
+  * Xmas effect: default iradio-source bookmarks added.
+
+ -- Zeeshan Ali <zeeshan.ali@nokia.com>  Fri, 12 Dec 2008 14:57:37 +0200
+
+midas-iradio-source (0.1.2008.50) unstable; urgency=low
+
+  * In development.
+
+ -- Zeeshan Ali <zeeshan.ali@nokia.com>  Fri, 05 Dec 2008 13:29:06 +0200
+
+midas-iradio-source (0.1.2008.49) unstable; urgency=low
+
+  * Fixes: NB#93836     midas-tracker-source : postinstallation script returns error: i386-dev & arm-dev fail to build
+
+ -- Zeeshan Ali <zeeshan.ali@nokia.com>  Fri, 28 Nov 2008 14:35:35 +0200
+
+midas-iradio-source (0.1.2008.48) unstable; urgency=low
+
+  * Added mechanism to start/stop wrappers on package install/removal
+    (ignoring scratchbox support for now).  Uses DSME.
+    Added an Xsession.post script.
+    Updated affected components
+
+ -- Zeeshan Ali <zeeshan.ali@nokia.com>  Fri, 21 Nov 2008 16:59:53 +0200
+
+midas-iradio-source (0.1.2008.47) unstable; urgency=low
+
+  * Fixes: NB#92071	Blank metadata window displayed for accessing non-empty IRadio-Source
+
+ -- Zeeshan Ali <zeeshan.ali@nokia.com>  Fri, 14 Nov 2008 12:30:41 +0200
+
+midas-iradio-source (0.1.2008.46) unstable; urgency=low
+
+  * Renamed bookmarks.confml to bookmarks.xml
+
+ -- Zeeshan Ali <zeeshan.ali@nokia.com>  Fri, 07 Nov 2008 11:58:32 +0200
+
+midas-iradio-source (0.1.2008.45) unstable; urgency=low
+
+  * In development.
+
+ -- Zeeshan Ali <zeeshan.ali@nokia.com>  Fri, 31 Oct 2008 14:14:16 +0200
+
+midas-iradio-source (0.1.2008.44) unstable; urgency=low
+
+  * In development.
+
+ -- Zeeshan Ali <zeeshan.ali@nokia.com>  Fri, 24 Oct 2008 10:11:52 +0300
+
+midas-iradio-source (0.1.2008.43) unstable; urgency=low
+
+  * Renaming sink->renderer
+
+ -- Zeeshan Ali <zeeshan.ali@nokia.com>  Fri, 17 Oct 2008 15:03:14 +0300
+
+midas-iradio-source (0.1.2008.37) unstable; urgency=low
+
+  * small face-lift (configure.ac, Makefile.am:s and build fixes)
+  * Fixes: NB#88113	iradio-source crashes on canceling browse operation
+
+ -- Zeeshan Ali <zeeshan.ali@nokia.com>  Mon, 08 Sep 2008 08:37:04 +0300
+
+midas-iradio-source (0.1.2008.35) unstable; urgency=low
+
+  * In development.
+
+ -- Zeeshan Ali <zeeshan.ali@nokia.com>  Sun, 24 Aug 2008 19:42:40 +0300
+
+midas-iradio-source (0.1.2008.33) unstable; urgency=low
+
+  * Initial release.
+
+ -- Zeeshan Ali <zeeshan.ali@nokia.com>  Sun, 10 Aug 2008 19:51:45 +0300

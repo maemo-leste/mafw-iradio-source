@@ -1,0 +1,101 @@
+{
+   <1>
+   Memcheck:Leak
+   fun:calloc
+   fun:g_malloc0
+   obj:*
+   obj:*
+   fun:g_type_init_with_debug_flags
+   fun:g_type_init
+   fun:main
+}
+{
+   <2>
+   Memcheck:Cond
+   fun:strlen
+   fun:_dl_init_paths
+   fun:dl_main
+   fun:_dl_sysdep_start
+   fun:_dl_start
+}
+{
+   <3>
+   Memcheck:Cond
+   fun:_dl_relocate_object
+   fun:dl_main
+   fun:_dl_sysdep_start
+   fun:_dl_start
+}
+{
+   <4>
+   Memcheck:Param
+   write(buf)
+   fun:write
+   obj:*
+   fun:sqlite3OsWrite
+   obj:*
+   obj:*
+   fun:sqlite3PagerBegin
+   fun:sqlite3BtreeBeginTrans
+   fun:sqlite3VdbeExec
+   obj:*
+   fun:sqlite3_step
+   fun:sqlite3_exec
+   fun:mafw_db_exec
+}
+{
+   <5>
+   Memcheck:Leak
+   fun:malloc
+   obj:*
+   obj:*
+   fun:sqlite3Malloc
+   fun:sqlite3MallocZero
+   obj:*
+   fun:sqlite3_open
+   fun:mafw_db_get
+   fun:mafw_db_exec
+   fun:init_db
+   fun:mafw_iradio_source_class_init
+   fun:mafw_iradio_source_class_intern_init
+}
+{
+   <6>
+   Memcheck:Param
+   write(buf)
+   fun:write
+   obj:*
+   fun:sqlite3OsWrite
+   obj:*
+   obj:*
+   fun:sqlite3PagerBegin
+   fun:sqlite3BtreeBeginTrans
+   fun:sqlite3VdbeExec
+   obj:*
+   fun:sqlite3_step
+   fun:mafw_db_do
+   fun:mafw_db_change
+}
+{
+   <7>
+   Memcheck:Cond
+   obj:/targets/*/lib/ld-2.5.so
+   obj:/targets/*/lib/ld-2.5.so
+   obj:/targets/*/lib/ld-2.5.so
+   obj:/targets/*/lib/ld-2.5.so
+   obj:/targets/*/lib/ld-2.5.so
+   obj:/targets/*/lib/ld-2.5.so
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+}
+{
+   <8>
+   Memcheck:Cond
+   obj:/targets/*/lib/ld-2.5.so
+   obj:/targets/*/lib/ld-2.5.so
+   obj:/targets/*/lib/ld-2.5.so
+   obj:/targets/*/lib/ld-2.5.so
+   obj:/targets/*/lib/ld-2.5.so
+}
