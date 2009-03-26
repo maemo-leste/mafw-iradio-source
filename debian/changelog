@@ -1,16 +1,22 @@
+mafw-iradio-source (0.1.2009.13-6) unstable; urgency=low
+
+  * MAFW iradio source, pre-release 0.2009.13-6
+
+ -- Juha Kellokoski <veitikka6@gmail.com>  Thu, 26 Mar 2009 09:53:00 +0200
+
 mafw-iradio-source (0.1.2009.13-5) unstable; urgency=low
 
   * MAFW iradio source, pre-release 0.2009.13-5
-
- -- Juha Kellokoski <ext-juha.kellokoski@nokia.com>  Wed, 25 Mar 2009 09:16:45 +0200
-
-mafw-iradio-source (0.1.2009.13-4) unstable; urgency=low
-
-  * MAFW iradio source, pre-release 0.2009.13-4
   * Set Visa as integrator.
   * Upgrade copyright year.
   * Add headers for Makefile.am and configure.ac files.
   * Set Visa Smolander as the contact person in headers.
+
+ -- Juha Kellokoski <veitikka6@gmail.com>  Thu, 26 Mar 2009 09:53:00 +0200
+
+mafw-iradio-source (0.1.2009.13-4) unstable; urgency=low
+
+  * MAFW iradio source, pre-release 0.2009.13-4
 
  -- Juha Kellokoski <ext-juha.kellokoski@nokia.com>  Wed, 25 Mar 2009 09:16:45 +0200
 
