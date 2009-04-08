@@ -166,14 +166,12 @@ static void store_metadata(gchar *key, gpointer value,
 	MafwIradioSourcePrivate *priv;
 	
 	priv = MAFW_IRADIO_SOURCE(data->self)->priv;
-	
 	if (data->error)
 		return;
 	
 	g_assert(value);
 	
 	serialized_data = mafw_metadata_val_freeze(value, &str_size);
-		
 	if (serialized_data && str_size)
 	{
 		g_debug("Adding new metadata for the ID: %llu key: %s",

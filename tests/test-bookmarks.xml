@@ -19,6 +19,7 @@
 			<IRadioChannel>
 				<Name>BBC World News Summary</Name>
 				<URI>http://www.bbc.co.uk/worldservice/meta/tx/nb/summary5min_au_nb.ram</URI>
+				<Duration>234</Duration>
 			</IRadioChannel>
 			<VideoBookmark>
 				<Name>VideoStream1</Name>

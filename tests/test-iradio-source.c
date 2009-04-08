@@ -763,6 +763,7 @@ static void confml_browse_result(MafwSource *self, guint browse_id,
 	GValue* value;
 	const gchar* str;
 	gchar* path;
+	gint numval;
 
 	_customization_browse_results++;
 
@@ -831,6 +832,12 @@ static void confml_browse_result(MafwSource *self, guint browse_id,
 		value = mafw_metadata_first(metadata, MAFW_METADATA_KEY_URI);
 		str = g_value_get_string(value);
 		fail_unless(strcmp(str, "http://www.bbc.co.uk/worldservice/meta/tx/nb/summary5min_au_nb.ram") == 0);
+
+		/* Duration */
+		value = mafw_metadata_first(metadata, MAFW_METADATA_KEY_DURATION);
+		fail_if(!value);
+		numval = g_value_get_int(value);
+		fail_if(numval != 234);
 
 		break;
 	case 3:

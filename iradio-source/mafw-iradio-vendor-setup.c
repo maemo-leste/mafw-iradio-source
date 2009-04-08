@@ -44,6 +44,7 @@
 #define NODE_VIDEO "VideoBookmark"
 #define NODE_NAME "Name"
 #define NODE_URI "URI"
+#define NODE_DURATION "Duration"
 #define NODE_ICON "Icon"
 #define NODE_LOCALPATH "localPath"
 #define NODE_TARGETPATH "targetPath"
@@ -202,6 +203,22 @@ static void mafw_iradio_parse_bookmark(MafwSource* self, xmlNode* root)
 					       MAFW_METADATA_KEY_TITLE,
 					       (const gchar *)title);
 			xmlFree(title);
+		}
+		else if (g_ascii_strcasecmp((const gchar*) current->name,
+				       NODE_DURATION) == 0)
+		{
+			xmlChar* durationstr;
+			gint duration;
+			gchar *strtail = NULL;
+
+			durationstr = xmlNodeGetContent(current);
+			duration = strtol((const char*)durationstr, &strtail, 10);
+			g_debug("Duration: %d", duration);
+			if (!strtail || strtail[0] == 0)
+				mafw_metadata_add_int(metadata,
+					       MAFW_METADATA_KEY_DURATION,
+					       duration);
+			xmlFree(durationstr);
 		}
 		else if (g_ascii_strcasecmp((const gchar *)current->name,
 					NODE_URI) == 0)
