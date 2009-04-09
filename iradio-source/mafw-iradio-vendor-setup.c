@@ -85,9 +85,13 @@ static void mafw_iradio_vendor_bookmark_created(MafwSource *self,
 static void mafw_iradio_create_bookmark_object(MafwSource* self,
 						GHashTable* metadata)
 {
+	time_t curtime = time(NULL);
+
 	g_assert(self != NULL);
 	g_assert(metadata != NULL);
 
+	mafw_metadata_add_long(metadata, MAFW_METADATA_KEY_ADDED,
+					       curtime);
 	mafw_source_create_object(self,
 				   MAFW_IRADIO_SOURCE_UUID "::",
 				   metadata,

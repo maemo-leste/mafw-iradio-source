@@ -755,6 +755,7 @@ END_TEST
  Vendor bookmarks testing
  ----------------------------------------------------------------------------*/
 static gint _customization_browse_results = 0;
+static time_t ref_time;
 static void confml_browse_result(MafwSource *self, guint browse_id,
 				 gint remaining_count, guint index,
 				 const gchar *object_id, GHashTable *metadata,
@@ -764,10 +765,10 @@ static void confml_browse_result(MafwSource *self, guint browse_id,
 	const gchar* str;
 	gchar* path;
 	gint numval;
+	glong stored_time;
 
 	_customization_browse_results++;
 
-	fail_unless(user_data != NULL);
 	fail_unless(error == NULL);
 
 	switch (index)
@@ -794,6 +795,13 @@ static void confml_browse_result(MafwSource *self, guint browse_id,
 		str = g_value_get_string(value);
 		fail_unless(strcmp(str, path) == 0);
 
+		/* Added */
+		value = mafw_metadata_first(metadata,
+					     MAFW_METADATA_KEY_ADDED);
+		fail_if(value == NULL);
+		stored_time = g_value_get_long(value);
+		fail_unless(stored_time < ref_time || ref_time + 3 > stored_time);
+
 		break;
 	case 1:
 		fail_unless(remaining_count == 4,
@@ -817,6 +825,13 @@ static void confml_browse_result(MafwSource *self, guint browse_id,
 		str = g_value_get_string(value);
 		fail_unless(strcmp(str, path) == 0);
 
+		/* Added */
+		value = mafw_metadata_first(metadata,
+					     MAFW_METADATA_KEY_ADDED);
+		fail_if(value == NULL);
+		stored_time = g_value_get_long(value);
+		fail_unless(stored_time < ref_time || ref_time + 3 > stored_time);
+
 		break;
 	case 2:
 		fail_unless(remaining_count == 3,
@@ -839,6 +854,13 @@ static void confml_browse_result(MafwSource *self, guint browse_id,
 		numval = g_value_get_int(value);
 		fail_if(numval != 234);
 
+		/* Added */
+		value = mafw_metadata_first(metadata,
+					     MAFW_METADATA_KEY_ADDED);
+		fail_if(value == NULL);
+		stored_time = g_value_get_long(value);
+		fail_unless(stored_time < ref_time || ref_time + 3 > stored_time);
+
 		break;
 	case 3:
 		fail_unless(remaining_count == 2,
@@ -854,6 +876,13 @@ static void confml_browse_result(MafwSource *self, guint browse_id,
 		value = mafw_metadata_first(metadata, MAFW_METADATA_KEY_URI);
 		str = g_value_get_string(value);
 		fail_unless(strcmp(str, "http://www.bbc.co.uk/worldservice/ram/sportsroundup.ram") == 0);
+
+		/* Added */
+		value = mafw_metadata_first(metadata,
+					     MAFW_METADATA_KEY_ADDED);
+		fail_if(value == NULL);
+		stored_time = g_value_get_long(value);
+		fail_unless(stored_time < ref_time || ref_time + 3 > stored_time);
 
 		break;
 	case 4:
@@ -871,6 +900,13 @@ static void confml_browse_result(MafwSource *self, guint browse_id,
 		str = g_value_get_string(value);
 		fail_unless(strcmp(str, "http://www.bbc.co.uk/worldservice/meta/tx/nb/live_news_au_nb.ram") == 0);
 
+		/* Added */
+		value = mafw_metadata_first(metadata,
+					     MAFW_METADATA_KEY_ADDED);
+		fail_if(value == NULL);
+		stored_time = g_value_get_long(value);
+		fail_unless(stored_time < ref_time || ref_time + 3 > stored_time);
+
 		break;
 	case 5:
 		fail_unless(remaining_count == 0,
@@ -887,7 +923,14 @@ static void confml_browse_result(MafwSource *self, guint browse_id,
 		str = g_value_get_string(value);
 		fail_unless(strcmp(str, "http://www.bbc.co.uk/radio1/realaudio/media/r1live.ram") == 0);
 
-		g_main_loop_quit((GMainLoop*) user_data);
+		/* Added */
+		value = mafw_metadata_first(metadata,
+					     MAFW_METADATA_KEY_ADDED);
+		fail_if(value == NULL);
+		stored_time = g_value_get_long(value);
+		fail_unless(stored_time < ref_time || ref_time + 3 > stored_time);
+
+		checkmore_stop_loop();
 		break;
 	default:
 		fail("Too many objects parsed to the database");
@@ -917,7 +960,6 @@ static gchar * uri_path(gchar *filename)
 START_TEST(test_confml_parse)
 {
 	MafwIradioSource* source;
-	GMainLoop* main_loop;
 	gchar *uri;
 
 	/* Get rid of other stuff within the database */
@@ -929,11 +971,9 @@ START_TEST(test_confml_parse)
 
 	/* Parse the test content into the database */
 	uri = uri_path("test-bookmarks.xml");
+	ref_time = time(NULL);
 	mafw_iradio_parse_confml_file(source, uri);
 	g_free(uri);
-
-	/* We need a mainloop to get the iradio source send its callbacks */
-	main_loop = g_main_loop_new(NULL, FALSE);
 
 	/* Browse for the test content */
 	mafw_source_browse(MAFW_SOURCE(source),
@@ -945,15 +985,13 @@ START_TEST(test_confml_parse)
 			    0,
 			    MAFW_SOURCE_BROWSE_ALL,
 			    confml_browse_result,
-			    main_loop);
+			    NULL);
 
-	g_main_loop_run(main_loop);
+	checkmore_spin_loop(-1);
 
 	fail_unless(_customization_browse_results == 6,
 		    "Not enough browse results for customization: %d",
 		    _customization_browse_results);
-
-	g_main_loop_unref(main_loop);
 }
 END_TEST
 
