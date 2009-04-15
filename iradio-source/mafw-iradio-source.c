@@ -26,19 +26,20 @@
 #include <libmafw/mafw-db.h>
 #include <libmafw/mafw-metadata-serializer.h>
 #include <string.h>
+#include <sys/stat.h>
+#include <glib/gstdio.h>
+
 
 
 #include "config.h"
 #include "mafw-iradio-source.h"
 #include "mafw-iradio-vendor-setup.h"
 
-
-#define IRADIO_TABLE "iradiobookmarks"
-
 #define MAFW_IRADIO_SOURCE_GET_PRIVATE(object)				\
 	(G_TYPE_INSTANCE_GET_PRIVATE ((object), MAFW_TYPE_IRADIO_SOURCE,\
 				      MafwIradioSourcePrivate))
 
+extern const gchar *vendor_setup_path;
 static gboolean load_vendor;
 
 struct _MafwIradioSourcePrivate
@@ -996,7 +997,7 @@ static guint browse(MafwSource *self, const gchar *object_id,
 	struct data_container current_data;
 	
 	g_debug("Browsing %s. Recursive: %d, Filter: %s, Sort criteria: %s,"
-		"Skip: %ud, Item count: %ud", object_id, recursive,
+		"Skip: %u, Item count: %u", object_id, recursive,
 		filter != NULL ? "yes" : "no", sort_criteria, skip_count,
 		item_count);
 	
@@ -1017,7 +1018,7 @@ static guint browse(MafwSource *self, const gchar *object_id,
 	privdat->last_browse_id++;
 	browse_data->bid = privdat->last_browse_id;
 	
-	g_debug("New browse-id: %ud", browse_data->bid);
+	g_debug("New browse-id: %u", browse_data->bid);
 	
 	/* This will filter the results */
 	current_data.cb = browse_metadata_cb;
@@ -1110,7 +1111,7 @@ static gboolean cancel_browse(MafwSource *self, guint browse_id,
 	MafwIradioSourcePrivate *privdat;
 	struct browse_data_container *found_item;
 
-	g_debug("Canceling browse: %ud", browse_id);
+	g_debug("Canceling browse: %u", browse_id);
 
 	privdat = MAFW_IRADIO_SOURCE(self)->priv;
 	
@@ -1146,9 +1147,13 @@ static void init_db(void)
 		"name = '" IRADIO_TABLE "'");
 
 	if (mafw_db_select(db_check, FALSE) == SQLITE_ROW)
+	{
 		load_vendor = FALSE;
+	}
 	else
+	{
 		load_vendor = TRUE;
+	}
 
 	sqlite3_finalize(db_check);
 
@@ -1159,7 +1164,7 @@ static void init_db(void)
 	 */
 	mafw_db_exec(
 		"CREATE TABLE IF NOT EXISTS " IRADIO_TABLE "(\n"
-		"id		INTEGER		NUT NULL,\n"
+		"id		INTEGER		NOT NULL,\n"
 		"key		TEXT		NOT NULL,\n"
 		"value		BLOB		)");
 }
@@ -1171,19 +1176,40 @@ static void init_db(void)
 
 G_DEFINE_TYPE(MafwIradioSource, mafw_iradio_source, MAFW_TYPE_SOURCE);
 
+static void set_vendorfile_date(MafwIradioSource *self, time_t mod_time)
+{
+	guint64 new_id;
+	sqlite3_stmt *stmt_vendofile_setdate;
+
+	new_id = get_next_id(self);
+	stmt_vendofile_setdate = mafw_db_prepare("INSERT "
+					"INTO " IRADIO_TABLE "("
+						"id, key, value) "
+					"VALUES(:id, '', :value)");
+	g_assert(mafw_db_begin());
+	mafw_db_bind_int64(stmt_vendofile_setdate, 0, new_id);
+	mafw_db_bind_blob(stmt_vendofile_setdate, 1, &mod_time,
+				sizeof(time_t));
+
+	if (mafw_db_change(stmt_vendofile_setdate, FALSE) != SQLITE_DONE)
+		g_assert_not_reached();
+	g_assert(mafw_db_nchanges() == 1);
+	g_assert(mafw_db_commit());
+	sqlite3_finalize(stmt_vendofile_setdate);
+}
 
 static void mafw_iradio_source_init(MafwIradioSource *self)
 {
 	g_return_if_fail(MAFW_IS_IRADIO_SOURCE(self));
 	self->priv = MAFW_IRADIO_SOURCE_GET_PRIVATE(self);
-	
+
 	self->priv->stmt_object_list = mafw_db_prepare("SELECT DISTINCT id "
-					"FROM " IRADIO_TABLE);
+					"FROM " IRADIO_TABLE " WHERE key != ''");
 	self->priv->stmt_get_value = mafw_db_prepare("SELECT value FROM "
 					IRADIO_TABLE " WHERE id = :id AND "
-							"key = :key");
+							"key = :key AND key != ''");
 	self->priv->stmt_get_key_value = mafw_db_prepare("SELECT key, value "
-					"FROM " IRADIO_TABLE " WHERE id = :id");
+					"FROM " IRADIO_TABLE " WHERE id = :id AND key != ''");
 	self->priv->stmt_insert = mafw_db_prepare("INSERT "
 					"INTO " IRADIO_TABLE "(id, "
 						"key, value) "
@@ -1199,7 +1225,67 @@ static void mafw_iradio_source_init(MafwIradioSource *self)
 						IRADIO_TABLE " WHERE id = :id");
 
 	if (load_vendor)
-		mafw_iradio_vendor_setup(self);
+	{
+		struct stat vendorstat;
+		gchar *vendorfile = g_strdup_printf("%s/%s", vendor_setup_path,
+							VENDOR_FILENAME);
+
+		mafw_iradio_vendor_setup(self, FALSE);
+		if (g_stat(vendorfile, &vendorstat) != 0)
+		{
+			g_free(vendorfile);
+			return;
+		}
+		set_vendorfile_date(self, vendorstat.st_mtime);
+		load_vendor = FALSE;
+		g_free(vendorfile);
+	}
+	else
+	{
+		const void *val;
+		time_t last_mod = 0;
+		struct stat vendorstat;
+		gchar *vendorfile = g_strdup_printf("%s/%s", vendor_setup_path,
+							VENDOR_FILENAME);
+		sqlite3_stmt *stmt_vendorfile_date;
+
+		if (g_stat(vendorfile, &vendorstat) != 0)
+		{
+			g_debug("Vendor file not found: %s", vendorfile);
+			g_free(vendorfile);
+			return;
+		}
+
+		stmt_vendorfile_date = mafw_db_prepare("SELECT "
+					"value FROM "
+					IRADIO_TABLE " WHERE key = ''");
+		g_assert(stmt_vendorfile_date);
+		if (mafw_db_select(stmt_vendorfile_date, FALSE) == SQLITE_ROW)
+		{
+			val = mafw_db_column_blob(stmt_vendorfile_date, 0);
+			if (val)
+				last_mod = *(time_t*)val;
+			else
+				last_mod = 0;
+		}
+		else
+		{
+			last_mod = 0;
+		}
+
+		g_free(vendorfile);
+		sqlite3_finalize(stmt_vendorfile_date);
+
+		if (vendorstat.st_mtime != last_mod)
+		{/* New vendor file.... db should be updated */
+			g_debug("Updating");
+			mafw_iradio_vendor_setup(self, TRUE);
+			if (last_mod != 0)
+				mafw_db_exec("DELETE FROM " IRADIO_TABLE 
+						" WHERE key = ''");
+			set_vendorfile_date(self, vendorstat.st_mtime);
+		}
+	}
 }
 
 static void dispose(GObject *object)

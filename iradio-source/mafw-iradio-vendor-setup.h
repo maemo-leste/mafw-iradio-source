@@ -25,12 +25,9 @@
 #ifndef MAFW_IRADIO_VENDOR_SETUP_H
 #define MAFW_IRADIO_VENDOR_SETUP_H
 
-/** The CONFML file that is parsed by this parser */
-#define VENDOR_BOOKMARKS "bookmarks.xml"
-
-#define VENDOR_SETUP_PATH "/usr/share/pre-installed/mafw-iradio-source-bookmarks/" VENDOR_BOOKMARKS
+#define VENDOR_FILENAME "bookmarks.xml"
 gboolean mafw_iradio_parse_confml_file(MafwIradioSource* self,
-					const gchar* path);
-void mafw_iradio_vendor_setup(MafwIradioSource* self);
+					const gchar* path, gboolean check_dups);
+void mafw_iradio_vendor_setup(MafwIradioSource* self, gboolean check_dups);
 
 #endif

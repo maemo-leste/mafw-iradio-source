@@ -33,6 +33,8 @@ G_BEGIN_DECLS
 #define MAFW_IRADIO_SOURCE_UUID "iradiosource"
 #define MAFW_IRADIO_SOURCE_PLUGIN_NAME "MAFW-IRadio-Source"
 
+#define IRADIO_TABLE "iradiobookmarks"
+
 /*----------------------------------------------------------------------------
   GObject type conversion macros
   ----------------------------------------------------------------------------*/

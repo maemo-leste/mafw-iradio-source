@@ -23,6 +23,8 @@
  */
 
 #include <libmafw/mafw.h>
+#include <libmafw/mafw-db.h>
+#include <libmafw/mafw-metadata-serializer.h>
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 #include <string.h>
@@ -34,7 +36,8 @@
   Macro definitions
   ---------------------------------------------------------------------------*/
 
-
+/** The CONFML file that is parsed by this parser */
+const gchar *vendor_setup_path="/usr/share/pre-installed/mafw-iradio-source-bookmarks/";
 
 /* XML nodes that the parser recognizes from the CONFML file format */
 #define NODE_CONFIGURATION "configuration"
@@ -83,7 +86,8 @@ static void mafw_iradio_vendor_bookmark_created(MafwSource *self,
  * browsing & metadata fetching.
  */
 static void mafw_iradio_create_bookmark_object(MafwSource* self,
-						GHashTable* metadata)
+						GHashTable* metadata,
+						gboolean check_dups)
 {
 	time_t curtime = time(NULL);
 
@@ -92,6 +96,36 @@ static void mafw_iradio_create_bookmark_object(MafwSource* self,
 
 	mafw_metadata_add_long(metadata, MAFW_METADATA_KEY_ADDED,
 					       curtime);
+	if (check_dups)
+	{
+		gpointer value;
+		
+		value = mafw_metadata_first(metadata, MAFW_METADATA_KEY_URI);
+		if (value)
+		{
+			gchar *serialized_data;
+			gsize str_size = 0;
+			sqlite3_stmt *stmt_dupfind = mafw_db_prepare("SELECT "
+					"id FROM "
+					IRADIO_TABLE " WHERE key = '" 
+					MAFW_METADATA_KEY_URI "' AND value = :value");
+		
+			serialized_data = mafw_metadata_val_freeze(value, &str_size);
+			mafw_db_bind_blob(stmt_dupfind, 0, serialized_data,
+					str_size);
+			g_assert(stmt_dupfind);
+			if (mafw_db_select(stmt_dupfind, FALSE) == SQLITE_ROW)
+			{
+				sqlite3_finalize(stmt_dupfind);
+				g_free(serialized_data);
+				return;
+			}
+			sqlite3_finalize(stmt_dupfind);
+			g_free(serialized_data);
+
+		}
+	}
+	
 	mafw_source_create_object(self,
 				   MAFW_IRADIO_SOURCE_UUID "::",
 				   metadata,
@@ -163,8 +197,8 @@ static void mafw_iradio_parse_bookmark_icon(MafwSource* self,
 		gchar* thumbnail_uri;
 
 		/* Construct a valid URI for the thumbnail icon file */
-		thumbnail_uri = g_strdup_printf("file://" VENDOR_SETUP_PATH "/%s",
-						icon);
+		thumbnail_uri = g_strdup_printf("file://%s/%s",
+						vendor_setup_path, icon);
 		g_debug("THUMBNAIL_URI: %s", thumbnail_uri);
 		mafw_metadata_add_str(metadata,
 				       MAFW_METADATA_KEY_THUMBNAIL_URI,
@@ -179,11 +213,13 @@ static void mafw_iradio_parse_bookmark_icon(MafwSource* self,
  *
  * @self: An iradio source that receives the parsed bookmark
  * @root: Either a <IRadioChannel> or a <VideoBookmark> node
+ * 
  *
  * Parses a single bookmark node and inserts it into the iradio source (@self)
  * along with some metadata values (Name, URI & Icon).
  */
-static void mafw_iradio_parse_bookmark(MafwSource* self, xmlNode* root)
+static void mafw_iradio_parse_bookmark(MafwSource* self, xmlNode* root,
+					gboolean check_dups)
 {
 	GHashTable* metadata;
 	xmlNode* current;
@@ -268,7 +304,7 @@ static void mafw_iradio_parse_bookmark(MafwSource* self, xmlNode* root)
 	}
 
 	/* Create an object to the IRadio database */
-	mafw_iradio_create_bookmark_object(self, metadata);
+	mafw_iradio_create_bookmark_object(self, metadata, check_dups);
 
 	/* Get rid of the metadata now that the stuff has been uploaded */
 	g_hash_table_unref(metadata);
@@ -304,7 +340,8 @@ static void mafw_iradio_parse_bookmark(MafwSource* self, xmlNode* root)
  *  </data>
  * </configuration ...>
  */
-static gboolean mafw_iradio_parse_confml(MafwSource* self, xmlNode* root)
+static gboolean mafw_iradio_parse_confml(MafwSource* self, xmlNode* root,
+						gboolean check_dups)
 {
 	xmlNode* current;
 	gboolean result = FALSE;
@@ -346,7 +383,7 @@ static gboolean mafw_iradio_parse_confml(MafwSource* self, xmlNode* root)
 			    NODE_VIDEO) == 0)
 		{
 			/* Parse the node as audio */
-			mafw_iradio_parse_bookmark(self, current);
+			mafw_iradio_parse_bookmark(self, current, check_dups);
 		}
 
 		current = current->next;
@@ -366,7 +403,7 @@ static gboolean mafw_iradio_parse_confml(MafwSource* self, xmlNode* root)
  * Returns: TRUE if successful, otherwise FALSE.
  */
 gboolean mafw_iradio_parse_confml_file(MafwIradioSource* self,
-					const gchar* path)
+					const gchar* path, gboolean check_dups)
 {
 	gboolean result;
 	xmlNode* root;
@@ -389,7 +426,8 @@ gboolean mafw_iradio_parse_confml_file(MafwIradioSource* self,
 	else
 	{
 		root = xmlDocGetRootElement(doc);
-		result = mafw_iradio_parse_confml(MAFW_SOURCE(self), root);
+		result = mafw_iradio_parse_confml(MAFW_SOURCE(self), root,
+							check_dups);
 		xmlFreeDoc(doc);
 	}
 
@@ -408,8 +446,12 @@ gboolean mafw_iradio_parse_confml_file(MafwIradioSource* self,
  * and sets a gconf key so that customization is done exactly once during the
  * plugin's lifetime.
  */
-void mafw_iradio_vendor_setup(MafwIradioSource* self)
+void mafw_iradio_vendor_setup(MafwIradioSource* self, gboolean check_dups)
 {
+	gchar *fname = g_strdup_printf("%s/%s", vendor_setup_path,
+					VENDOR_FILENAME);
+
 	g_assert(self != NULL);
-	mafw_iradio_parse_confml_file(self, VENDOR_SETUP_PATH);
+	mafw_iradio_parse_confml_file(self, fname, check_dups);
+	g_free(fname);
 }

@@ -32,11 +32,16 @@
 #include <check.h>
 #include <glib.h>
 #include <libmafw/mafw.h>
+#include <sys/stat.h>
+#include <glib/gstdio.h>
+#include <utime.h>
 
 #include "iradio-source/mafw-iradio-source.h"
 #include "iradio-source/mafw-iradio-vendor-setup.h"
 
 #define ADDED_ITEM_NR 20
+
+extern const gchar *vendor_setup_path;
 
 START_TEST(test_plugin)
 {
@@ -756,6 +761,16 @@ END_TEST
  ----------------------------------------------------------------------------*/
 static gint _customization_browse_results = 0;
 static time_t ref_time;
+
+static void vendor_obi_destroyed(MafwSource *self, const gchar *object_id,
+				gpointer user_data, const GError *error)
+{
+	fail_if(error != NULL);
+	checkmore_stop_loop();
+}
+
+static gboolean browse_results[6] = {0, };
+
 static void confml_browse_result(MafwSource *self, guint browse_id,
 				 gint remaining_count, guint index,
 				 const gchar *object_id, GHashTable *metadata,
@@ -766,34 +781,33 @@ static void confml_browse_result(MafwSource *self, guint browse_id,
 	gchar* path;
 	gint numval;
 	glong stored_time;
+	gint round = 0;
+	
+	if (user_data)
+		round = 1;
 
 	_customization_browse_results++;
 
 	fail_unless(error == NULL);
 
-	switch (index)
+	/* Title */
+	value = mafw_metadata_first(metadata,
+				     MAFW_METADATA_KEY_TITLE);
+	str = g_value_get_string(value);
+	if (strcmp(str, "VideoStream2") == 0)
 	{
-	case 0:
-		fail_unless(remaining_count == 5,
-			    "Expected 5, but got %d", remaining_count);
-		
-		/* Title */
-		value = mafw_metadata_first(metadata,
-					     MAFW_METADATA_KEY_TITLE);
-		str = g_value_get_string(value);
-		fail_unless(strcmp(str, "VideoStream2") == 0);
-
 		/* URI */
 		value = mafw_metadata_first(metadata, MAFW_METADATA_KEY_URI);
 		str = g_value_get_string(value);
 		fail_unless(strcmp(str, "mms://videobroadcast.com/someothervideo") == 0);
 
 		/* Thumbnail URI */
-		path = "file://" VENDOR_SETUP_PATH "/icon2.png";
+		path = g_strdup_printf("file://%s/icon2.png", vendor_setup_path);
 		value = mafw_metadata_first(metadata,
 					     MAFW_METADATA_KEY_THUMBNAIL_URI);
 		str = g_value_get_string(value);
-		fail_unless(strcmp(str, path) == 0);
+		fail_unless(strcmp(str, path) == 0, "%s vs %s", str, path);
+		g_free(path);
 
 		/* Added */
 		value = mafw_metadata_first(metadata,
@@ -801,29 +815,22 @@ static void confml_browse_result(MafwSource *self, guint browse_id,
 		fail_if(value == NULL);
 		stored_time = g_value_get_long(value);
 		fail_unless(stored_time < ref_time || ref_time + 3 > stored_time);
-
-		break;
-	case 1:
-		fail_unless(remaining_count == 4,
-			    "Expected 4, but got %d", remaining_count);
-
-		/* Title */
-		value = mafw_metadata_first(metadata,
-					     MAFW_METADATA_KEY_TITLE);
-		str = g_value_get_string(value);
-		fail_unless(strcmp(str, "VideoStream1") == 0);
-		
+		fail_if(browse_results[0]);
+		browse_results[0] = TRUE;
+	} else if (strcmp(str, "VideoStream1") == 0)
+	{
 		/* URI */
 		value = mafw_metadata_first(metadata, MAFW_METADATA_KEY_URI);
 		str = g_value_get_string(value);
 		fail_unless(strcmp(str, "mms://videobroadcast.com/somevideo") == 0);
 
 		/* Thumbnail URI */
-		path = "file://" VENDOR_SETUP_PATH "/icon1.png";
+		path = g_strdup_printf("file://%s/icon1.png", vendor_setup_path);
 		value = mafw_metadata_first(metadata,
 					     MAFW_METADATA_KEY_THUMBNAIL_URI);
 		str = g_value_get_string(value);
 		fail_unless(strcmp(str, path) == 0);
+		g_free(path);
 
 		/* Added */
 		value = mafw_metadata_first(metadata,
@@ -831,18 +838,10 @@ static void confml_browse_result(MafwSource *self, guint browse_id,
 		fail_if(value == NULL);
 		stored_time = g_value_get_long(value);
 		fail_unless(stored_time < ref_time || ref_time + 3 > stored_time);
-
-		break;
-	case 2:
-		fail_unless(remaining_count == 3,
-			    "Expected 3, but got %d", remaining_count);
-
-		/* Title */
-		value = mafw_metadata_first(metadata,
-					     MAFW_METADATA_KEY_TITLE);
-		str = g_value_get_string(value);
-		fail_unless(strcmp(str, "BBC World News Summary") == 0);
-
+		fail_if(browse_results[1]);
+		browse_results[1] = TRUE;
+	} else if (strcmp(str, "BBC World News Summary") == 0)
+	{
 		/* URI */
 		value = mafw_metadata_first(metadata, MAFW_METADATA_KEY_URI);
 		str = g_value_get_string(value);
@@ -860,18 +859,10 @@ static void confml_browse_result(MafwSource *self, guint browse_id,
 		fail_if(value == NULL);
 		stored_time = g_value_get_long(value);
 		fail_unless(stored_time < ref_time || ref_time + 3 > stored_time);
-
-		break;
-	case 3:
-		fail_unless(remaining_count == 2,
-			    "Expected 2, but got %d", remaining_count);
-
-		/* Title */
-		value = mafw_metadata_first(metadata,
-					     MAFW_METADATA_KEY_TITLE);
-		str = g_value_get_string(value);
-		fail_unless(strcmp(str, "BBC Sport Roundup") == 0);
-
+		fail_if(browse_results[2]);
+		browse_results[2] = TRUE;
+	} else if (strcmp(str, "BBC Sport Roundup") == 0)
+	{
 		/* URI */
 		value = mafw_metadata_first(metadata, MAFW_METADATA_KEY_URI);
 		str = g_value_get_string(value);
@@ -883,18 +874,10 @@ static void confml_browse_result(MafwSource *self, guint browse_id,
 		fail_if(value == NULL);
 		stored_time = g_value_get_long(value);
 		fail_unless(stored_time < ref_time || ref_time + 3 > stored_time);
-
-		break;
-	case 4:
-		fail_unless(remaining_count == 1,
-			    "Expected 1, but got %d", remaining_count);
-
-		/* Title */
-		value = mafw_metadata_first(metadata,
-					     MAFW_METADATA_KEY_TITLE);
-		str = g_value_get_string(value);
-		fail_unless(strcmp(str, "BBC World Service") == 0);
-
+		fail_if(browse_results[3]);
+		browse_results[3] = TRUE;
+	} else if (strcmp(str, "BBC World Service") == 0)
+	{
 		/* URI */
 		value = mafw_metadata_first(metadata, MAFW_METADATA_KEY_URI);
 		str = g_value_get_string(value);
@@ -906,18 +889,10 @@ static void confml_browse_result(MafwSource *self, guint browse_id,
 		fail_if(value == NULL);
 		stored_time = g_value_get_long(value);
 		fail_unless(stored_time < ref_time || ref_time + 3 > stored_time);
-
-		break;
-	case 5:
-		fail_unless(remaining_count == 0,
-			    "Expected 0, but got %d", remaining_count);
-
-		/* Title */
-		value = mafw_metadata_first(metadata,
-					     MAFW_METADATA_KEY_TITLE);
-		str = g_value_get_string(value);
-		fail_unless(strcmp(str, "BBC Radio 1") == 0);
-
+		fail_if(browse_results[4]);
+		browse_results[4] = TRUE;
+	} else if (strcmp(str, "BBC Radio 1") == 0)
+	{
 		/* URI */
 		value = mafw_metadata_first(metadata, MAFW_METADATA_KEY_URI);
 		str = g_value_get_string(value);
@@ -930,7 +905,40 @@ static void confml_browse_result(MafwSource *self, guint browse_id,
 		stored_time = g_value_get_long(value);
 		fail_unless(stored_time < ref_time || ref_time + 3 > stored_time);
 
-		checkmore_stop_loop();
+		fail_if(browse_results[5]);
+		browse_results[5] = TRUE;
+	} else
+		g_assert_not_reached();
+	
+	switch (index)
+	{
+	case 0:
+		fail_unless(remaining_count == 5 - round,
+			    "Expected %d, but got %d", 5 - round, remaining_count);
+		break;
+	case 1:
+		fail_unless(remaining_count == 4 - round,
+			    "Expected %d, but got %d", 4 - round, remaining_count);
+		break;
+	case 2:
+		fail_unless(remaining_count == 3 - round,
+			    "Expected %d, but got %d", 3 - round, remaining_count);
+		break;
+	case 3:
+		fail_unless(remaining_count == 2 - round,
+			    "Expected %d, but got %d", 2 - round, remaining_count);
+		break;
+	case 4:
+		fail_unless(remaining_count == 1 - round,
+			    "Expected %d, but got %d", 1 - round, remaining_count);
+		if (user_data)
+			checkmore_stop_loop();
+		break;
+	case 5:
+		fail_unless(remaining_count == 0,
+			    "Expected 0, but got %d", remaining_count);
+
+		mafw_source_destroy_object(self, object_id, vendor_obi_destroyed, NULL);
 		break;
 	default:
 		fail("Too many objects parsed to the database");
@@ -961,7 +969,10 @@ START_TEST(test_confml_parse)
 {
 	MafwIradioSource* source;
 	gchar *uri;
+	struct stat vendorstat;
+	struct utimbuf newmodtime;
 
+	vendor_setup_path = TEST_DIR;
 	/* Get rid of other stuff within the database */
 	unlink("test-iradiosource.db");
 
@@ -970,11 +981,62 @@ START_TEST(test_confml_parse)
 	fail_if(source == NULL, "Unable to create an IRadio source");
 
 	/* Parse the test content into the database */
-	uri = uri_path("test-bookmarks.xml");
+	uri = uri_path("bookmarks.xml");
 	ref_time = time(NULL);
-	mafw_iradio_parse_confml_file(source, uri);
-	g_free(uri);
 
+	/* Browse for the test content */
+	mafw_source_browse(MAFW_SOURCE(source),
+			    MAFW_IRADIO_SOURCE_UUID "::",
+			    FALSE,
+			    NULL,
+			    NULL,
+			    MAFW_SOURCE_ALL_KEYS,
+			    0,
+			    MAFW_SOURCE_BROWSE_ALL,
+			    confml_browse_result,
+			    NULL);
+	checkmore_spin_loop(-1);
+
+	fail_unless(_customization_browse_results == 6,
+		    "Not enough browse results for customization: %d",
+		    _customization_browse_results);
+	g_object_unref(source);
+	_customization_browse_results = 0;
+
+	source = MAFW_IRADIO_SOURCE(mafw_iradio_source_new());
+	fail_if(source == NULL, "Unable to create an IRadio source again");
+
+	memset(&browse_results, 0, sizeof(gboolean) * 6);
+	/* Browse for the test content... it should not add the missing items */
+	mafw_source_browse(MAFW_SOURCE(source),
+			    MAFW_IRADIO_SOURCE_UUID "::",
+			    FALSE,
+			    NULL,
+			    NULL,
+			    MAFW_SOURCE_ALL_KEYS,
+			    0,
+			    MAFW_SOURCE_BROWSE_ALL,
+			    confml_browse_result,
+			    (gpointer)source);
+
+	checkmore_spin_loop(-1);
+	fail_unless(_customization_browse_results == 5,
+		    "Not enough browse results for customization: %d",
+		    _customization_browse_results);
+	g_object_unref(source);
+	_customization_browse_results = 0;
+
+	fail_if(g_stat(uri+7, &vendorstat) != 0);
+	newmodtime.actime = vendorstat.st_atime;
+	newmodtime.modtime = vendorstat.st_mtime + 5;
+	fail_if(g_utime(uri+7, &newmodtime) != 0);
+
+	source = MAFW_IRADIO_SOURCE(mafw_iradio_source_new());
+	fail_if(source == NULL, "Unable to create an IRadio source again");
+
+	ref_time = time(NULL);
+
+	memset(&browse_results, 0, sizeof(gboolean) * 6);
 	/* Browse for the test content */
 	mafw_source_browse(MAFW_SOURCE(source),
 			    MAFW_IRADIO_SOURCE_UUID "::",
@@ -992,6 +1054,9 @@ START_TEST(test_confml_parse)
 	fail_unless(_customization_browse_results == 6,
 		    "Not enough browse results for customization: %d",
 		    _customization_browse_results);
+	g_object_unref(source);
+
+	g_free(uri);
 }
 END_TEST
 

@@ -6,7 +6,7 @@
 # Copyright (C) 2007, 2008, 2009 Nokia. All rights reserved.
 
 TESTS				= test-iradio-source
-
+testdir = @abs_top_builddir@/tests/
 check_PROGRAMS			= $(TESTS)
 noinst_PROGRAMS			= $(TESTS)
 
@@ -18,14 +18,15 @@ test_iradio_source_SOURCES	= test-iradio-source.c
 AM_CPPFLAGS			= $(CHECKMORE_CFLAGS) \
 				  $(GOBJECT_CFLAGS) \
 				  $(MAFW_CFLAGS) \
-				  -I$(top_srcdir) -g
+				  -I$(top_srcdir) -g \
+				  -DTEST_DIR='"$(testdir)"'
 
 LDADD				= $(CHECKMORE_LIBS) \
 				  $(GOBJECT_LIBS) \
 				  $(MAFW_LIBS) \
 				  $(top_builddir)/iradio-source/mafw-iradio-source.la
 
-EXTRA_DIST			= test-bookmarks.xml
+EXTRA_DIST			= bookmarks.xml
 
 CLEANFILES			= $(BUILT_SOURCES) $(TESTS) \
 				  test-iradiosource.db *.gcno *.gcda
