@@ -6,7 +6,7 @@
 # Copyright (C) 2007, 2008, 2009 Nokia. All rights reserved.
 
 AC_PREREQ([2.53])
-AC_INIT([mafw-iradio-source], [0.1.2009.13-6])
+AC_INIT([mafw-iradio-source], [0.1.2009.17-1])
 
 AC_CONFIG_SRCDIR([iradio-source/mafw-iradio-source.h])
 AC_CONFIG_HEADERS([config.h])
@@ -78,7 +78,7 @@ AS_IF([test "x$enable_debug" = xyes],
 
 
 dnl Tests.
-ENABLED_BY_DEFAULT([tests], [disable unit tests])
+DISABLED_BY_DEFAULT([tests], [disable unit tests])
 if test "x$enable_tests" = xyes; then
 	PKG_CHECK_MODULES(CHECKMORE, [checkmore, check >= 0.9.4])
 	if test -z "$CHECKMORE_LIBS"; then
