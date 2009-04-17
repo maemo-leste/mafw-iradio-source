@@ -1,17 +1,17 @@
 mafw-iradio-source (0.1.2009.17-2) unstable; urgency=low
 
-  * Version increased.
-
- -- Mika Tapojärvi <ext-mika.tapojarvi@nokia.com>  Thu, 16 Apr 2009 11:05:58 +0300
-
-mafw-iradio-source (0.1.2009.17-1) unstable; urgency=low
-
-  * MAFW iradio source, pre-release 0.2009.17-1
+  * MAFW iradio source, pre-release 0.2009.17-2
   * Updating DB, if there is a new vendor-file
   * Adding 'added' metadata at building the default bookmarks
   * Adding duration support for default bookmarks
   * Modified mafw-tracker-source rules.
   * Source code moved to Gnome.
+
+ -- Juha Kellokoski <veitikka6@gmail.com>  Fri, 17 Apr 2009 09:18:07 +0300
+
+mafw-iradio-source (0.1.2009.17-1) unstable; urgency=low
+
+  * MAFW iradio source, pre-release 0.2009.17-1
 
  -- Mika Tapojärvi <mika.tapojarvi@sse.fi>  Wed, 15 Apr 2009 16:00:41 +0300
 
