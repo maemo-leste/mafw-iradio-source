@@ -1,7 +1,7 @@
 Source: mafw-iradio-source
 Section: misc
 Priority: optional
-Maintainer: Mika Tapojärvi <ext-mika.tapojarvi@nokia.com>
+Maintainer: Juha Kellokoski <veitikka6@gmail.com>
 Build-Depends: debhelper (>= 4.0.0),
 	       libglib2.0-dev,
 	       libmafw0-dev, checkmore, libxml2-dev 
