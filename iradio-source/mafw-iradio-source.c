@@ -179,8 +179,9 @@ static void store_metadata(gchar *key, gpointer value,
 						data->id, key);
 		mafw_db_bind_int64(priv->stmt_insert, 0, data->id);
 		mafw_db_bind_text(priv->stmt_insert, 1, key);
-		mafw_db_bind_blob(priv->stmt_insert, 2, serialized_data,
-					str_size);
+		if (mafw_db_bind_blob(priv->stmt_insert, 2, serialized_data,
+					str_size) != SQLITE_OK)
+			goto out0;
 		
 		if (mafw_db_change(priv->stmt_insert, FALSE) != SQLITE_DONE)
 			goto out0;
