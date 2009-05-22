@@ -1,8 +1,9 @@
-mafw-iradio-source (0.1.2009.19-2) unstable; urgency=low
+mafw-iradio-source (0.1.2009.22-1) unstable; urgency=low
 
-  * MAFW iradio source, pre-release 0.2009.19-2
+  * MAFW iradio source, pre-release 0.2009.22-1
+  * CID 343
 
- -- Juha Kellokoski <veitikka6@gmail.com>  Thu, 30 Apr 2009 10:00:00 +0300
+ -- Juha Kellokoski <veitikka6@gmail.com>  Fri, 22 May 2009 12:00:00 +0300
 
 mafw-iradio-source (0.1.2009.19-1) unstable; urgency=low
 
