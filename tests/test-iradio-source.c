@@ -250,15 +250,13 @@ static void mdat_get_root_cb(MafwSource *self, const gchar *object_id,
 			GHashTable *metadata, gpointer mime,
 			const GError *error)
 {
-        gchar *childcount = MAFW_METADATA_KEY_CHILDCOUNT(1);
-
 	fail_if(error);
 	fail_unless(metadata != NULL);
 	fail_unless(mafw_metadata_first(metadata, MAFW_METADATA_KEY_URI)
 				== NULL);
 	fail_unless(mafw_metadata_first(metadata, MAFW_METADATA_KEY_MIME)
 				!= NULL);
-	fail_unless(mafw_metadata_first(metadata, childcount)
+	fail_unless(mafw_metadata_first(metadata, MAFW_METADATA_KEY_CHILDCOUNT_1)
 				!= NULL);
 
 	fail_if(error != NULL);
@@ -268,10 +266,9 @@ static void mdat_get_root_cb(MafwSource *self, const gchar *object_id,
 				mafw_metadata_first(metadata,
 					MAFW_METADATA_KEY_MIME)),
 				MAFW_METADATA_VALUE_MIME_CONTAINER) != 0);
-	fail_if(g_value_get_int(mafw_metadata_first(metadata, childcount))
+	fail_if(g_value_get_int(mafw_metadata_first(metadata, MAFW_METADATA_KEY_CHILDCOUNT_1))
 				!= g_list_length(created_ob_ids));
 	mafw_metadata_release(metadata);
-        g_free(childcount);
 	checkmore_stop_loop();
 }
 
@@ -299,10 +296,8 @@ START_TEST(test_get_set_metadata)
 {
 	MafwIradioSource *radio_src;
 	GHashTable *mdat;
-        gchar *childcount;
 	
 	radio_src = MAFW_IRADIO_SOURCE(mafw_iradio_source_new());
-        childcount = MAFW_METADATA_KEY_CHILDCOUNT(1);
 	mdat = mafw_metadata_new();
 	
 	g_signal_connect(radio_src,"container-changed", (GCallback)cont_chd_cb,
@@ -365,7 +360,7 @@ START_TEST(test_get_set_metadata)
 						MAFW_IRADIO_SOURCE_UUID "::",
 					MAFW_SOURCE_LIST(MAFW_METADATA_KEY_URI,
 							MAFW_METADATA_KEY_MIME,
-							childcount),
+							MAFW_METADATA_KEY_CHILDCOUNT_1),
 						mdat_get_root_cb, 
 						NULL);
 	mafw_source_get_metadata(MAFW_SOURCE(radio_src), 
@@ -444,7 +439,6 @@ START_TEST(test_get_set_metadata)
 
 	mafw_metadata_release(mdat);
 	g_object_unref(radio_src);
-        g_free(childcount);
 }
 END_TEST
 
