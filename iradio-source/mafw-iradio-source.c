@@ -39,6 +39,8 @@
 	(G_TYPE_INSTANCE_GET_PRIVATE ((object), MAFW_TYPE_IRADIO_SOURCE,\
 				      MafwIradioSourcePrivate))
 
+#define IRADIO_KEY_CHILDCOUNT "childcount(1)"
+
 extern const gchar *vendor_setup_path;
 static gboolean load_vendor;
 
@@ -554,10 +556,10 @@ static gboolean get_metadata_cb(struct data_container *data)
 						MAFW_METADATA_KEY_MIME,
 						MAFW_METADATA_VALUE_MIME_CONTAINER);
 				} else if (!strcmp(data->metadata_keys[i],
-						MAFW_METADATA_KEY_CHILDCOUNT))
+						IRADIO_KEY_CHILDCOUNT))
 				{
 					mafw_metadata_add_int(metadata, 
-						MAFW_METADATA_KEY_CHILDCOUNT,
+						IRADIO_KEY_CHILDCOUNT,
 						(gint)get_child_count(priv));
 				}
 				i++;
@@ -569,7 +571,7 @@ static gboolean get_metadata_cb(struct data_container *data)
 						MAFW_METADATA_KEY_MIME,
 						MAFW_METADATA_VALUE_MIME_CONTAINER);
 			mafw_metadata_add_int(metadata, 
-						MAFW_METADATA_KEY_CHILDCOUNT,
+						IRADIO_KEY_CHILDCOUNT,
 						(gint)get_child_count(priv));
 			
 		}
