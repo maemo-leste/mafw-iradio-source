@@ -1,8 +1,14 @@
-mafw-iradio-source (0.1.2009.27-3) unstable; urgency=low
+mafw-iradio-source (0.1.2009.28-2) unstable; urgency=low
 
-  * MAFW iradio source, pre-release 0.2009.27-3
+  * MAFW iradio source, pre-release 0.2009.28-2
 
- -- Juha Kellokoski <veitikka6@gmail.com>  Tue, 30 Jun 2009 14:00:00 +0300
+ -- Juha Kellokoski <veitikka6@gmail.com>  Fri, 03 Jul 2009 11:00:00 +0300
+
+mafw-iradio-source (0.1.2009.28-1) unstable; urgency=low
+
+  * MAFW iradio source, pre-release 0.2009.28-1
+
+ -- Juha Kellokoski <veitikka6@gmail.com>  Fri, 03 Jul 2009 11:00:00 +0300
 
 mafw-iradio-source (0.1.2009.27-2) unstable; urgency=low
 
