@@ -456,7 +456,7 @@ static void free_mdat_array(gpointer data, gpointer user_data)
 	mafw_metadata_release(data);
 }
 
-static void compare_ref(gchar *key, GValue *refval, GHashTable *metadata)
+static void compare_ref(gchar *key, GValueArray *refval, GHashTable *metadata)
 {
 	GValue *cur_val;
 	gchar *cur_val_ser, *refval_ser;
@@ -466,7 +466,7 @@ static void compare_ref(gchar *key, GValue *refval, GHashTable *metadata)
 	fail_if(refval == NULL,
 			"Reference value missing");
 	cur_val_ser = g_strdup_value_contents(cur_val);
-	refval_ser = g_strdup_value_contents(refval);
+	refval_ser = g_strdup_value_contents(g_value_array_get_nth(refval, 0));
 	
 	fail_if(strcmp(cur_val_ser, refval_ser) != 0,
 		"Comparing values failed....: %s vs. %s",

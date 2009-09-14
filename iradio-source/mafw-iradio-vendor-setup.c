@@ -100,7 +100,7 @@ static void mafw_iradio_create_bookmark_object(MafwSource* self,
 	{
 		gpointer value;
 		
-		value = mafw_metadata_first(metadata, MAFW_METADATA_KEY_URI);
+		value = g_hash_table_lookup(metadata, MAFW_METADATA_KEY_URI);
 		if (value)
 		{
 			gchar *serialized_data;
