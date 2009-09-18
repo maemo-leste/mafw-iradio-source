@@ -6,7 +6,7 @@
 # Copyright (C) 2007, 2008, 2009 Nokia. All rights reserved.
 
 AC_PREREQ([2.53])
-AC_INIT([mafw-iradio-source], [0.1.2009.39-1])
+AC_INIT([mafw-iradio-source], [0.1.2009.37-1])
 
 AC_CONFIG_SRCDIR([iradio-source/mafw-iradio-source.h])
 AC_CONFIG_HEADERS([config.h])
