@@ -59,6 +59,7 @@ install: build
 	dh_testdir
 	dh_testroot
 	dh_clean -k 
+	dh_installdirs
 	$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp
 
 binary-indep: build install
@@ -69,6 +70,8 @@ binary-arch: build install
 	dh_installchangelogs ChangeLog
 	dh_installdocs
 	dh_install --sourcedir=debian/tmp -v
+	install debian/mafw-iradio-source.mafw.xsession \
+		debian/mafw-iradio-source/etc/X11/Xsession.post/33mafw-iradio-source
 	dh_link
 	dh_strip --dbg-package=mafw-iradio-source
 	dh_compress
