@@ -1,3 +1,9 @@
+mafw-iradio-source (0.2.2010.01-1) unstable; urgency=low
+
+  * Rebuild.
+
+ -- Mika Tapojärvi <mika.tapojarvi@sse.fi>  Thu, 07 Jan 2010 19:45:49 +0200
+
 mafw-iradio-source (0.2.2009.52-1) unstable; urgency=low
 
   * Rebuild for 2009.52-1.
