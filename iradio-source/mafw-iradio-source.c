@@ -28,7 +28,7 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <glib/gstdio.h>
-
+#include <inttypes.h>
 
 
 #include "config.h"
@@ -175,7 +175,7 @@ static void store_metadata(gchar *key, gpointer value,
 	serialized_data = mafw_metadata_val_freeze(value, &str_size);
 	if (serialized_data && str_size)
 	{
-		g_debug("Adding new metadata for the ID: %llu key: %s",
+		g_debug("Adding new metadata for the ID: %" PRIu64 " key: %s",
 						data->id, key);
 		mafw_db_bind_int64(priv->stmt_insert, 0, data->id);
 		mafw_db_bind_text(priv->stmt_insert, 1, key);
@@ -286,7 +286,7 @@ static void create_object(MafwSource *self, const gchar *parent,
 	create_object_data->self = self;
 	create_object_data->user_data = user_data;
 	create_object_data->object_id = g_strdup_printf(MAFW_IRADIO_SOURCE_UUID
-					"::%lld",
+					"::%" PRId64,
 					new_id);
 	if (!mafw_db_begin())
 		goto create_object_err0;
@@ -532,7 +532,7 @@ static gboolean get_metadata_cb(struct data_container *data)
 	GByteArray *bary;
 	GError *err = NULL;
 	gint i = 0;
-	guint b_size = 0;
+	gsize b_size = 0;
 	MafwIradioSourcePrivate *priv;
 	
 	MafwSourceMetadataResultCb cb =
@@ -820,7 +820,7 @@ static gboolean emit_browse_res(struct browse_data_container *browse_data)
 	gchar *current_object_id = NULL;
 	struct metadata_data *current_data = NULL;
 	GHashTable *current_metadata = NULL;
-	MafwIradioSourcePrivate *privdat;
+	/* MafwIradioSourcePrivate *privdat; */
 	
 	if (browse_data->free_req)
 	{
@@ -885,13 +885,13 @@ static gboolean emit_browse_res(struct browse_data_container *browse_data)
 		browse_data->item_count = 0;
 	}
 	
-	privdat = MAFW_IRADIO_SOURCE(browse_data->self)->priv;
+	/* privdat = MAFW_IRADIO_SOURCE(browse_data->self)->priv; */
 	if (browse_data->object_list)
 	{
 		current_data = browse_data->object_list->data;
 	
 		current_object_id = g_strdup_printf(MAFW_IRADIO_SOURCE_UUID
-						"::%lld",
+						"::%" PRId64,
 						current_data->id);
 	
 		if (!browse_data->metadata_keys ||

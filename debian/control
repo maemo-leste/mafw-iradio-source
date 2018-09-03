@@ -2,9 +2,10 @@ Source: mafw-iradio-source
 Section: misc
 Priority: optional
 Maintainer: Mika Tapojarvi <mika.tapojarvi@sse.fi>
-Build-Depends: debhelper (>= 4.0.0),
+Build-Depends: debhelper (>= 9.0.0),
 	       libglib2.0-dev,
-	       libmafw0-dev, checkmore, libxml2-dev 
+	       libmafw0-dev, checkmore, libxml2-dev,
+	       maemo-system-services-dev
 Standards-Version: 3.7.2
 
 Package: mafw-iradio-source
@@ -14,10 +15,3 @@ Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: MAFW internet radio source
  Radio source for MAFW internet.
 
-Package: mafw-iradio-source-dbg
-Section: devel
-Architecture: any
-Priority: extra
-Depends: mafw-iradio-source (= ${binary:Version})
-Description: debug symbols for mafw-iradio-source
- Mafw-iradio-source debug symbols.

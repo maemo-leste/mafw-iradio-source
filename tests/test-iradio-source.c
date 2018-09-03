@@ -1066,9 +1066,9 @@ int main(void)
 {
 	TCase *tc;
 	Suite *suite;
-
+#if !GLIB_CHECK_VERSION(2,35,0)
 	g_type_init();
-
+#endif
 	unlink("test-iradiosource.db");
 	g_setenv("MAFW_DB", "test-iradiosource.db", TRUE);
 	
@@ -1077,14 +1077,14 @@ int main(void)
 	/* Browse tests */
 	tc = tcase_create("Browse");
 	suite_add_tcase(suite, tc);
-if (1)	tcase_add_test(tc, test_plugin);
-if (1)	tcase_add_test(tc, test_add_remove);
-if (1)	tcase_add_test(tc, test_get_set_metadata);
-if (1)	tcase_add_test(tc, test_browse);
+	if (1)	tcase_add_test(tc, test_plugin);
+	if (1)	tcase_add_test(tc, test_add_remove);
+	if (1)	tcase_add_test(tc, test_get_set_metadata);
+	if (1)	tcase_add_test(tc, test_browse);
 	tcase_set_timeout(tc, 60); /* With valgrind, it could need more time */
 
 	tc = tcase_create("Customization");
-if (1)	suite_add_tcase(suite, tc);
+	if (1)	suite_add_tcase(suite, tc);
 	tcase_add_test(tc, test_confml_parse);
 	tcase_set_timeout(tc, 60); /* With valgrind, it could need more time */
 

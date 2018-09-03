@@ -19,7 +19,8 @@ AM_CPPFLAGS			= $(CHECKMORE_CFLAGS) \
 				  $(GOBJECT_CFLAGS) \
 				  $(MAFW_CFLAGS) \
 				  -I$(top_srcdir) -g \
-				  -DTEST_DIR='"$(testdir)"'
+				  -DTEST_DIR='"$(testdir)"' \
+				  -DGLIB_DISABLE_DEPRECATION_WARNINGS
 
 LDADD				= $(CHECKMORE_LIBS) \
 				  $(GOBJECT_LIBS) \

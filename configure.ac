@@ -57,7 +57,6 @@ dnl Default compile flags.  (NOTE: CFLAGS is reserved for the user!)
 AC_SUBST([_CFLAGS])
 AC_SUBST([_LDFLAGS])
 _CFLAGS="-Wall -Wmissing-prototypes -Wmissing-declarations"
-_CFLAGS="$_CFLAGS -ggdb3"
 
 dnl Configure-time options.
 
@@ -65,16 +64,14 @@ dnl Debugging.
 DISABLED_BY_DEFAULT([debug], [compile with debug flags and extra output])
 if test "x$enable_debug" = xyes; then
 	AC_DEFINE([MAFW_DEBUG], [1], [Enable debugging related parts.])
-	_CFLAGS="$_CFLAGS -O0 -Werror"
+	_CFLAGS="$_CFLAGS -Werror"
 else
 	AC_DEFINE([G_DEBUG_DISABLE], [1], [Disable g_debug() calls.])
-	_CFLAGS="$_CFLAGS -O2"
 fi
 AS_IF([test "x$enable_debug" = xyes],
 	[AC_DEFINE([MAFW_DEBUG], [1], [Enable extra debug messages])
-	 CFLAGS="$CFLAGS -Werror -O0 -ggdb3"],
-	[AC_DEFINE([G_DEBUG_DISABLE], [1], [Disable g_debug calls])
-	 CFLAGS="$CFLAGS -O2"])
+	 CFLAGS="$CFLAGS -Werror"],
+	[AC_DEFINE([G_DEBUG_DISABLE], [1], [Disable g_debug calls])])
 
 
 dnl Tests.
