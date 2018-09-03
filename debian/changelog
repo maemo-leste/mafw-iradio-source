@@ -1,3 +1,9 @@
+mafw-iradio-source (0.3.0) unstable; urgency=low
+
+  * port to leste and debhelper 9
+
+ -- Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>  Mon, 03 Sep 2018 08:49:42 +0300
+
 mafw-iradio-source (0.2.2010.06-2) unstable; urgency=low
 
   * Bump version number so its not the same as the stock package
